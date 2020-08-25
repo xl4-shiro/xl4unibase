@@ -1,0 +1,19 @@
+#+LATEX_HEADER: \documentclass[oneside]{book}
+#+LATEX_HEADER: \usepackage{geometry}
+#+LATEX_HEADER: \geometry{a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \definecolor{electricblue}{HTML}{05ADF3}
+#+LATEX_HEADER: \hypersetup{colorlinks, citecolor=electricblue,filecolor=electricblue,linkcolor=electricblue,urlcolor=electricblue}
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancyplain}
+#+LATEX_HEADER: \fancyhead[LE,CE,RE,CO,LO,RO]{\fancyplain{}{}}
+#+LATEX_HEADER: \fancyfoot[CE,CO]{\fancyplain{}{}}
+#+LATEX_HEADER: \fancyfoot[RE,RO]{\fancyplain{}{\bfseries\thepage}}
+#+LATEX_HEADER: \fancyfoot[LE,LO]{\fancyplain{}{{\raisebox{.0\height}{\includegraphics[width=2.4cm]{excelfore_logo.png}}}{\hspace{2mm}\bfseries\scriptsize {\textcolor{cyan}{Confidential} XL4-DOCUMENT-DATE, XL4-DOCUMENT-FOOTER-TITLE}}}}
+#+LATEX_HEADER: \renewcommand{\footrulewidth}{0.4pt}
+#+LATEX_HEADER: \renewcommand{\headrulewidth}{0.4pt}
+#+OPTIONS: ^:nil
+#+TITLE: XL4-DOCUMENT-TITLE
+#+AUTHOR: Excelfore Japan
+#+DATE: XL4-DOCUMENT-DATE
