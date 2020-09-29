@@ -28,13 +28,13 @@ import getopt
 
 class DefaultHeader(object):
     def __init__(self, fname="defaults.h"):
-        inf=open(fname)
+        inf=open(fname, encoding='utf-8')
         recomp=re.compile(r"^\s*#define\s+DEFAULT_(\S+)\s+(\S+).*")
         recomps=re.compile(r"^\s*#define\s+DEFAULT_(\S+)\s+(\".*\").*max_length *= *([0-9]*).*")
         recompss=re.compile(r"^\s*#define\s+DEFAULT_(\S+)\s+(\".*\").*")
-        slen=0
         self.default_array=[]
         while True:
+            slen=0
             line=inf.readline()
             if line=="": break
             r=recomp.match(line)

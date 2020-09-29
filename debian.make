@@ -44,11 +44,11 @@ debian/rules:
 	@echo "%:" >> $@
 	@echo "	dh \$$@ --with autoreconf" >> $@
 	@echo "override_dh_auto_install:" >> $@
-	@echo "	make DESTDIR=\$$(PWD)/debian/$(PACKAGENAME) install-exec" >> $@
-	@echo "	make DESTDIR=\$$(PWD)/debian/$(PACKAGENAME)-dev install-data" >> $@
+	@echo "	make DESTDIR=\$$(CURDIR)/debian/$(PACKAGENAME) install-exec" >> $@
+	@echo "	make DESTDIR=\$$(CURDIR)/debian/$(PACKAGENAME)-dev install-data" >> $@
 	@echo "	if [ \"\$$(DEB_BUILD_GNU_TYPE)\" =  \"\$$(DEB_HOST_GNU_TYPE)\" ]; then \\" >> $@
-	@echo "		make DESTDIR=\$$(PWD)/debian/$(PACKAGENAME)-doc install-html;\\" >> $@
-	@echo "		make DESTDIR=\$$(PWD)/debian/$(PACKAGENAME)-doc install-pdf;\\" >> $@
+	@echo "		make DESTDIR=\$$(CURDIR)/debian/$(PACKAGENAME)-doc install-html;\\" >> $@
+	@echo "		make DESTDIR=\$$(CURDIR)/debian/$(PACKAGENAME)-doc install-pdf;\\" >> $@
 	@echo "	fi" >> $@
 
 debian/control:
