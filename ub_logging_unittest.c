@@ -213,6 +213,61 @@ static void test_ub_log_print(void **state)
 
 }
 
+static void test_ub_log_print_al1(void **state)
+{
+	int i;
+	float a;
+	char pstr[256];
+	i=20;
+	a=3.1415;
+
+	console_data[0]=0;
+	debug_data[0]=0;
+	// level=3, def01 print REALTIME
+	sprintf(pstr, format1,level_mark[3],"def01",
+		RTS_SEC, RTS_MSEC*1000, i, i, a);
+	ub_log_print(TEST_MOD1, 0, 3, "int=%d, hex=0x%x, float=%f\n",i,i,a);
+	assert_string_equal(pstr, console_data);
+	assert_string_equal(pstr, debug_data);
+
+	console_data[0]=0;
+	debug_data[0]=0;
+	// level=3, def04 print REALTIME
+	sprintf(pstr, format1,level_mark[3],"def04",
+		RTS_SEC, RTS_MSEC*1000, i, i, a);
+	ub_log_print(TEST_MOD4, 0, 3, "int=%d, hex=0x%x, float=%f\n",i,i,a);
+	assert_string_equal(pstr, console_data);
+	assert_string_equal(pstr, debug_data);
+
+	console_data[0]=0;
+	debug_data[0]=0;
+	// level=4, def01 print REALTIME
+	sprintf(pstr, format1,level_mark[4],"def01",
+		RTS_SEC, RTS_MSEC*1000, i, i, a);
+	ub_log_print(TEST_MOD1, 0, 4, "int=%d, hex=0x%x, float=%f\n",i,i,a);
+	assert_string_equal("", console_data);
+	assert_string_equal(pstr, debug_data);
+
+	console_data[0]=0;
+	debug_data[0]=0;
+	// level=4, def04 print REALTIME
+	sprintf(pstr, format1,level_mark[4],"def04",
+		RTS_SEC, RTS_MSEC*1000, i, i, a);
+	ub_log_print(TEST_MOD4, 0, 4, "int=%d, hex=0x%x, float=%f\n",i,i,a);
+	assert_string_equal("", console_data);
+	assert_string_equal(pstr, debug_data);
+
+	console_data[0]=0;
+	debug_data[0]=0;
+	for(i=TEST_MOD0;i<=TEST_MOD4;i++){
+		// level=5
+		ub_log_print(i, 0, 5, "int=%d, hex=0x%x, float=%f\n",i,i,a);
+		assert_string_equal("", console_data);
+		assert_string_equal("", debug_data);
+	}
+}
+
+
 #define UB_LOGCAT TEST_MOD0
 #define UB_LOGTSTYPE UB_CLOCK_MONOTONIC
 static void test_ub_log_print_macro(void **state)
@@ -268,6 +323,21 @@ static int setup2(void **state)
 	return 0;
 }
 
+static int setup3(void **state)
+{
+	unibase_init_para_t init_para={
+		.cbset.console_out=test_console_out,
+		.cbset.debug_out=test_debug_out,
+		.cbset.mutex_init=NULL,
+		.cbset.gettime64=test_gettime64,
+		//3:WARN, 4:INFO with RTS for all levels
+		.ub_log_initstr=ub_log_initstr_override(
+			"2,mod0:34r,mod1:45m,mod2:56g,mod3:23","34r"),
+	};
+	unibase_init(&init_para);
+	return 0;
+}
+
 static int teardown(void **state)
 {
 	unibase_close();
@@ -279,6 +349,7 @@ int main(int argc, char *argv[])
 	const struct CMUnitTest tests[] = {
 		cmocka_unit_test_setup_teardown(test_ub_log_print, setup1, teardown),
 		cmocka_unit_test_setup_teardown(test_ub_log_print_macro, setup2, teardown),
+		cmocka_unit_test_setup_teardown(test_ub_log_print_al1, setup3, teardown),
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

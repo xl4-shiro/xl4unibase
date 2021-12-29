@@ -208,7 +208,6 @@ class DefaultHeader(object):
         outf.write("{\n")
         outf.write("\t%s_config_item_t item;\n" % pf)
         outf.write("\titem=%sconf_get_item_num(istr);\n" % pf)
-        outf.write("\tif(item<0) return -1;\n")
         outf.write("\treturn %sconf_set_item(item, v);\n" % pf)
         outf.write("}\n")
         outf.write("\n")

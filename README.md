@@ -37,18 +37,72 @@ For the detail of the callback functions, look at unibase.h
 The other part of the initialization is defining logging levels.
 The logging level can be initialized by a single string, and applications
 can change it at run time.
-For the detail of the logging control, look at ub_logging.h
+For the detail of the logging control, look at the next section.
 
 ## ub_logging
-We know there is no best way for logging messages.
-It is always too few lines or too noisy.
+When 'unibase_init' is called, 'ub_log_initstr' is passed.
+E.G. in the gptp2d main function,
+```
+	ubb_default_initpara(&init_para);
+	init_para.ub_log_initstr=UBL_OVERRIDE_ISTR("4,ubase:45,cbase:45,gptp:46", "UBL_GPTP");
+	unibase_init(&init_para);
+```
+Here, "4,ubase:45,cbase:45,gptp:46" is a string to be passed, and an environment
+variable: "UBL_GPTP" overrides the string if it is defined.
 
-To be close to the best fitting of logging, flexible and reasonably easy
-run-time configuration is important.
-We got a hint from [the way in 'gstreamer']
-(https://gstreamer.freedesktop.org/documentation/tutorials/basic/debugging-tools.html).
+The logging is controlled per category, and each category has a console log and a memory log.
+2 digits number defines the logging level for 'console log' and 'memory log'.
+If it is 1 digit, the same number is applied on the both.
 
-'ub_logging' supports configuration by a string.
+The logging levels are defined as follows:
+NONE=0, FATAL=1, ERROR=2, WARN=3, INFO=4, INFOV=5, DEBUG=6, DEBUGV=7
+
+In the example, "4,ubase:45,cbase:45,gptp:46"
++ the first comma separated section is '4', this is a defult logging level(4 is INFO level).
+  The single digit number is applied on both 'console log' and 'memory log'.
++ the second section is 'ubase:45'.  This defines the logging for 'category 0'.
+  The category name is 'ubase', 'console log' level is 4(INFO) and 'memory log' level is 5(INFOV)
++ the third section is 'cbase:45'.  This defines the logging for 'category 1'.
+  The category name is 'cbase', 'console log' level is 4(INFO) and 'memory log' level is 5(INFOV)
++ the fourth section is 'gptp:46'.  This defines the logging for 'category 2'.
+  The category name is 'gptp', 'console log' level is 4(INFO) and 'memory log' level is 6(DEBUG)
++ For 'category 3' and higher category number, the default is applied.
+  The category name is 'def03', 'def04',,,,
+'console log' level is 4(INFO) and 'memory log' level is 4(INFO)
+
+Adding timestamp on the log messages is controlled by a flag:UB_LOGTSTYPE in 'ub_log_print',
+UB_TLOG macro can be used conveniently.
+
+When you want to supersede the flag and put timestamps on all log messages,
+it can be done adding a suffix character on the 2-digit number.
+
+Adding suffix 'r' as 'ubase:45r', the realtime clock based timestamps are added
+on all log messages of 'category 0' regardless UB_LOGTSTYPE flag.
+
+In ths same way, suffix 'm' uses the monotonic based timestamps,
+and suffix 'g' uses gPTP based timestamp.
+
+'unibase_posix.c' doesn't support gPTP based timestamp in 'ubb_default_initpara'.
+To use it, you need to set gptp time fuction by calling 'set_gptp_gettime64'.
+
+To override a hardcoded string to initialize the logging functions,
+an environment variable can be used.
+
+In the gptp2d example above, 'UBL_GPTP' can be used, and you can run it as follows:
++ $ UBL_GPTP="4,ubase:56m,cbase:56m,gptp:57m" gptp2d<br/>
+    "4,ubase:56m,cbase:56m,gptp:57m" replaces the entire initialization string.
++ $ UBL_GPTP="47r" gptp2d<br/>
+    "47r" replaces the entire initialization string.
++ $ UBL_GPTP="gptp:57m" gptp2d<br/>
+    only the gptp section is replaced with "gptp:57m", change it as follows:<br/>
+    "4,ubase:45,cbase:45,gptp:46" -> "4,ubase:45,cbase:45,gptp:57m"
+
+The rule here is as follows:
++ if ',' exists or ':' doesn't exist, then the entire string is replaces.
++ otherwise, it replaces only the named part.
+
+To retrieve the memory log messages, 'ubb_memory_out_alldata' or 'ubb_memory_file_out'
+can be called.
 
 For more detail, look at ub_logging.h
 

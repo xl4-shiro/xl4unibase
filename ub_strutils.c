@@ -60,11 +60,10 @@ uint8_t *ub_smac2bmac(const char *smac, ub_macaddr_t bmac)
 	char astr[18];
 	for(i=0;i<18;i++){
 		if(!smac[i]) break;
-		astr[i]=tolower(smac[i]);
+		astr[i]=tolower((int)smac[i]);
 	}
 	astr[17]=0;
-	sscanf(astr,"%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
-	       bmac, bmac+1, bmac+2, bmac+3, bmac+4, bmac+5);
+	for(i=0;i<6;i++) bmac[i]=(uint8_t)strtol(astr+i*3, NULL, 16);
 	return bmac;
 }
 
@@ -80,11 +79,10 @@ uint8_t *ub_ssid2bsid(const char *ssid, ub_streamid_t bsid)
 	char astr[24];
 	for(i=0;i<24;i++){
 		if(!ssid[i]) break;
-		astr[i]=tolower(ssid[i]);
+		astr[i]=tolower((int)ssid[i]);
 	}
 	astr[23]=0;
-	sscanf(astr,"%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
-	       bsid, bsid+1, bsid+2, bsid+3, bsid+4, bsid+5, bsid+6, bsid+7);
+	for(i=0;i<8;i++) bsid[i]=(uint8_t)strtol(astr+i*3, NULL, 16);
 	return bsid;
 }
 

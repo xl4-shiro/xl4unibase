@@ -19,7 +19,7 @@
 # <https://www.gnu.org/licenses/old-licenses/gpl-2.0.html>.
 #
 PACKAGENAME=xl4unibase
-VERSION=1.1.0
+VERSION=1.1.2
 DESCRIPTION=Excelfore universal base library
 lib_LTLIBRARIES = libx4unibase.la
 libx4unibase_la_SOURCES = \
@@ -43,7 +43,7 @@ pkgincludedir=$(includedir)/$(PACKAGENAME)
 docdir=${datarootdir}/doc/$(PACKAGENAME)
 pkgdatadir=${datarootdir}/$(PACKAGENAME)
 
-AM_CFLAGS = -I. -Wall -Wno-unused-result \
+AM_CFLAGS = -I. -Wall -Wextra -Wno-unused-parameter \
 	-DXL4PKGVERSION=\"$(VERSION)-`cd $(srcdir);echo opensrc`\"
 ACLOCAL_AMFLAGS = -I m4
 
@@ -53,7 +53,7 @@ endif
 
 UNITY_SRCDIR = $(srcdir)/Unity/src
 check_PROGRAMS = ub_logging_unittest ub_esarray_unittest unibase_macros_unittest \
-ub_llist_unittest ub_genconf_unittest ub_confutils_unittest
+ub_llist_unittest ub_genconf_unittest ub_confutils_unittest ub_strutils_unittest
 ub_logging_unittest_SOURCES = ub_logging_unittest.c
 ub_logging_unittest_LDADD = libx4unibase.la
 ub_logging_unittest_LDFLAGS = -lcmocka
@@ -66,6 +66,9 @@ unibase_macros_unittest_LDFLAGS = -lcmocka
 ub_llist_unittest_SOURCES = ub_llist_unittest.c
 ub_llist_unittest_LDADD = libx4unibase.la
 ub_llist_unittest_LDFLAGS = -lcmocka
+ub_strutils_unittest_SOURECE = ub_strutils_unittest.c
+ub_strutils_unittest_LDADD = libx4unibase.la
+ub_strutils_unittest_LDFLAGS = -lcmocka
 
 if POSIX_PLATFORM
 libx4unibase_la_SOURCES += \
@@ -160,3 +163,6 @@ uninstall-local:
 
 deb:
 	cd $(srcdir); make -f debian.make
+
+CPPCHECK_TST_TARGET = $(libx4unibase_la_SOURCES)
+-include $(srcdir)/make_cppcheck.mk

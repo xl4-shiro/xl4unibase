@@ -175,16 +175,48 @@ erexit:
 	return res;
 }
 
+int ubb_memory_file_out(const char *fname)
+{
+	FILE *outf;
+	int lwp;
+	int i;
+	int res=-1;
+	int size1=0;
+	char *str1=NULL;
+
+	if(!fname || !fname[0]) return -1;
+	outf=fopen(fname, "w");
+	if(!outf) return -1;
+	pthread_mutex_lock(&memoutd.mutex);
+	if(memcmp(memoutd.buffer+memoutd.wp, endmark, endmlen)) goto erexit;
+	lwp=memoutd.wp;
+	str1=memoutd.buffer+lwp+endmlen+1;
+	for(i=lwp+endmlen+1;i<memoutd.size;i++){
+		if(*(memoutd.buffer+i)==0){
+			break;
+		}
+	}
+	size1=i-(lwp+endmlen+1);
+	i=0;
+	if(size1) i=fwrite(str1, 1, size1, outf);
+	if(lwp) i+=fwrite(memoutd.buffer, 1, lwp, outf);
+	if(i==size1+lwp) res=0;
+erexit:
+	pthread_mutex_unlock(&memoutd.mutex);
+	fclose(outf);
+	return res;
+}
+
 static int ubb_memory_out(bool flush, const char *str)
 {
-	int v;
+	uint32_t v;
 	if(memoutd.size<0) return 0;
 	if(!memoutd.size){
 		if(ubb_memory_out_init(NULL, UBB_DEFAULT_DEBUG_LOG_MEMORY)) return -1;
 	}
 	pthread_mutex_lock(&memoutd.mutex);
 	v=strlen(str);
-	if(memoutd.wp+v >= memoutd.size-(endmlen+1)){
+	if(memoutd.wp+v >= (uint32_t)memoutd.size-(endmlen+1)){
 		// if it is at the bottom, fill 0 in the remaining buffer
 		memset(memoutd.buffer+memoutd.wp, 0, memoutd.size-memoutd.wp);
 		memoutd.wp=0;
@@ -208,7 +240,7 @@ static void *ubb_mutex_init(void)
 {
 	pthread_mutex_t *mt;
 	mt=(pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	ub_assert(mt, __func__, "malloc error");
+	ub_assert(mt!=NULL, __func__, "malloc error");
 	ub_assert(pthread_mutex_init(mt, NULL)==0, __func__, "pthread_mutex_init error");
 	return mt;
 }
@@ -232,6 +264,7 @@ static int ubb_mutex_unlock(void *mt)
 	return pthread_mutex_unlock((pthread_mutex_t *)mt);
 }
 
+static get64ts_t gptp_gettime64=NULL;
 static uint64_t ubb_gettime64(ub_clocktype_t ctype)
 {
 	struct timespec ts={0,0};
@@ -246,7 +279,8 @@ static uint64_t ubb_gettime64(ub_clocktype_t ctype)
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		break;
 	case UB_CLOCK_GPTP:
-		break;
+		if(!gptp_gettime64) return 0;
+		return gptp_gettime64();
 	}
 	return ts.tv_sec*UB_SEC_NS+ts.tv_nsec;
 }
@@ -263,4 +297,17 @@ void ubb_default_initpara(unibase_init_para_t *init_para)
 	init_para->cbset.mutex_unlock=ubb_mutex_unlock;
 	init_para->cbset.gettime64=ubb_gettime64;
 	init_para->ub_log_initstr=default_log_initstr;
+}
+
+void set_gptp_gettime64(get64ts_t func)
+{
+	gptp_gettime64=func;
+}
+
+void ubb_unibase_easyinit(void)
+{
+	unibase_init_para_t init_para;
+	ubb_default_initpara(&init_para);
+	unibase_init(&init_para);
+	ubb_memory_out_init(NULL, 0);// no memory is allocated for the logging
 }

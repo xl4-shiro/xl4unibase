@@ -146,9 +146,10 @@ const char *ub_log_initstr_override(const char *ns, const char *os)
 
 	memset(&ubcd.logmsgd_ovrd, 0, sizeof(ub_logmsg_data_t));
 	if(!os) return ns;
-	if(strchr(os, ',')) return os;
+	if(strchr(os, ',')) return os; // if 'os' has ',', replace 'ns' with 'os'
+	if(!strchr(os, ':')) return os; // if 'os' doesn't have ':', replace 'ns' with 'os'
 	v=log_one_category(os, &ubcd.logmsgd_ovrd, NULL);
-	if(v<strlen(os)){
+	if(v<(int)strlen(os)){
 		printf("invalid format of override string=%s\n", os);
 	}
 	return ns;
@@ -227,7 +228,7 @@ int ub_log_print(int cat_index, int flags, ub_dbgmsg_level_t level,
 	uint32_t tsec, tnsec;
 	char *level_mark[]=DBGMSG_LEVEL_MARK;
 
-	if(level<0 || level>UBL_DEBUGV) return -1;
+	if((unsigned int)level>UBL_DEBUGV) return -1;
 	if(check_cat_index(cat_index, __func__)) return -1;
 	if((level > ubcd.logmsgd[cat_index].clevel &&
 	    level > ubcd.logmsgd[cat_index].dlevel) || (level==0)) return 0;

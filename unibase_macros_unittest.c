@@ -25,13 +25,13 @@
 #include "unibase.h"
 #include "ub_unittest_helper.c"
 
-UB_BIT8_FIELD(bt1, 5, 3);
-UB_BIT16_FIELD(bt2, 13, 3);
-UB_BIT32_FIELD(bt3, 21, 3);
+UB_ABIT8_FIELD(bt1, 5, 3);
+UB_ABIT16_FIELD(bt2, 13, 3);
+UB_ABIT32_FIELD(bt3, 21, 3);
 
-UB_BIT8_TOGGLE_FIELD(btt1, 7, 1);
-UB_BIT16_TOGGLE_FIELD(btt2, 15, 1);
-UB_BIT32_TOGGLE_FIELD(btt3, 31, 1);
+UB_ABIT8_TOGGLE_FIELD(btt1, 7, 1);
+UB_ABIT16_TOGGLE_FIELD(btt2, 15, 1);
+UB_ABIT32_TOGGLE_FIELD(btt3, 31, 1);
 
 static void test_macros1(void **state)
 {
@@ -67,35 +67,35 @@ static void test_macros1(void **state)
 
 	/* operations on bit fields */
 	p=0xff;
-	bt1_set_bit_field(&p, 0);
+	p = bt1_set_bit_field(p, 0);
 	assert_int_equal(p, 0x9f);
-	bt1_set_bit_field(&p, 1);
+	p = bt1_set_bit_field(p, 1);
 	assert_int_equal(p, 0xbf);
 	y=0xffff;
-	bt2_set_bit_field(&y, 0);
+	y = bt2_set_bit_field(y, 0);
 	assert_int_equal(y, ntohs(0x9fff));
-	bt2_set_bit_field(&y, 1);
+	y = bt2_set_bit_field(y, 1);
 	assert_int_equal(y, ntohs(0xbfff));
 	x=0xffffffff;
-	bt3_set_bit_field(&x, 0);
+	x = bt3_set_bit_field(x, 0);
 	assert_int_equal(x, ntohl(0xff9fffff));
-	bt3_set_bit_field(&x, 1);
+	x = bt3_set_bit_field(x, 1);
 	assert_int_equal(x, ntohl(0xffbfffff));
 
 	p=0xff;
-	btt1_toggle_bit_field(&p);
+	p = btt1_toggle_bit_field(p);
 	assert_int_equal(p, 0x7f);
-	btt1_toggle_bit_field(&p);
+	p = btt1_toggle_bit_field(p);
 	assert_int_equal(p, 0xff);
 	y=0xffff;
-	btt2_toggle_bit_field(&y);
+	y = btt2_toggle_bit_field(y);
 	assert_int_equal(y, ntohs(0x7fff));
-	btt2_toggle_bit_field(&y);
+	y = btt2_toggle_bit_field(y);
 	assert_int_equal(y, ntohs(0xffff));
 	x=0xffffffff;
-	btt3_toggle_bit_field(&x);
+	x = btt3_toggle_bit_field(x);
 	assert_int_equal(x, ntohl(0x7fffffff));
-	btt3_toggle_bit_field(&x);
+	x = btt3_toggle_bit_field(x);
 	assert_int_equal(x, ntohl(0xffffffff));
 
 	/* operations on timestamp */

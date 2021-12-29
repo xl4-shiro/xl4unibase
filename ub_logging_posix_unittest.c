@@ -41,7 +41,7 @@ typedef struct omdata {
 
 static void *direct_buffer_check(void *ptr)
 {
-	char pstr[64], qstr[64];
+	char pstr[64], qstr[80];
 	int i,c,v;
 	int pnum=*((int*)ptr);
 
@@ -114,10 +114,13 @@ static void test_ub_log_memout_thread(void **state)
 static void test_ub_log_memout_all(void **state)
 {
 	char pstr1[64];
-	int i, v, c, res;
+	int i, res;
+	uint32_t c, v;
 	char *tstr="0123456789";
 	char *str1;
 	int size1;
+
+	assert_int_equal(987654321,ub_gptp_gettime64());
 
 	sprintf(pstr1, "%s:%s:%s\n", level_mark[UBL_INFO], "ubase", tstr);
 	v=strlen(pstr1);
@@ -135,13 +138,13 @@ static void test_ub_log_memout_all(void **state)
 	assert_memory_equal(pstr1, str1, size1);
 	free(str1);
 
-	for(i=0;i<c-1;i++){
+	for(i=0;i<(int)c-1;i++){
 		UB_LOG(UBL_INFO, "%s\n", tstr);
 	}
 	res=ubb_memory_out_alldata(&str1,&size1);
 	assert_int_equal(res, 0);
 	assert_int_equal(size1, v*c);
-	for(i=0;i<c;i++){
+	for(i=0;i<(int)c;i++){
 		assert_memory_equal(pstr1, str1+v*i, v);
 	}
 	free(str1);
@@ -150,10 +153,15 @@ static void test_ub_log_memout_all(void **state)
 	res=ubb_memory_out_alldata(&str1,&size1);
 	assert_int_equal(res, 0);
 	assert_memory_equal(pstr1+strlen(endmark)+1, str1, v-strlen(endmark)-1);
-	for(i=0;i<c-2;i++){
+	for(i=0;i<(int)c-2;i++){
 		assert_memory_equal(pstr1, str1+v-strlen(endmark)-1+v*i, v);
 	}
 	free(str1);
+}
+
+static uint64_t gptp_dummy_time64(void)
+{
+	return 987654321;
 }
 
 static int setup(void **state)
@@ -164,6 +172,7 @@ static int setup(void **state)
 	init_para.ub_log_initstr="4,ubase:35";
 	unibase_init(&init_para);
 	ubb_memory_out_init(memoutbuf, sizeof(memoutbuf)-1);
+	set_gptp_gettime64(gptp_dummy_time64);
 	return 0;
 }
 
@@ -237,7 +246,7 @@ static int test_ub_log3(int llevel, int pnum)
 
 static void test_ub_log_env_cat(void **state)
 {
-	char pstr[64], qstr[64];
+	char pstr[64], qstr[80];
 	int v;
 	int pnum=100;
 	envstrd_t *envsd=(envstrd_t *)*state;

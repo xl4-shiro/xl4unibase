@@ -81,21 +81,12 @@
 
 /**
  * @brief two of inline functions: name_bit_field, name_set_bit_field
- *	are created for bit opperation on 8-bit variable.
+ *	are created for bit opperation on a network bit order endian variable.
  *
- *	e.g UB_BIT8_FIELD(bs, 2, 0x1f),
- *	  - bs_bit_field(&v): read 'bit6 to bit2 of 'v'
- *	  - bs_set_bit_field(&v, 5): set 'bit6 to bit2' of 'v' to 5
- *
- * @note using pointer as the argument is safe in some situations.
- *	It is encouraged to use UB_ABIT* versions.
+ *	e.g UB_ABIT8_FIELD(bs, 2, 0x1f),
+ *	  - bs_bit_field(v): read 'bit6 to bit2 of 'v'
+ *	  - v=bs_set_bit_field(v, 5): set 'bit6 to bit2' of 'v' to 5
  */
-#define UB_BIT8_FIELD(name, s, m)				      \
-	static inline int name##_bit_field(uint8_t *x)		      \
-	{ return (*x >> (s)) & (m); }				      \
-	static inline int name##_set_bit_field(uint8_t *x, uint8_t v) \
-	{ return (*x = (*x & ~((m) << (s))) | ((v & (m)) << (s))) ; }
-
 #define UB_ABIT8_FIELD(name, s, m)				      \
 	static inline int name##_bit_field(uint8_t x)		      \
 	{ return (x >> (s)) & (m); }				      \
@@ -103,12 +94,6 @@
 	{ return (x & ~((m) << (s))) | ((v & (m)) << (s)) ; }
 
 /** @brief the same like UB_BIT8_FILED, works on 16-bit variable */
-#define UB_BIT16_FIELD(name, s, m)					\
-	static inline int name##_bit_field(uint16_t *x)			\
-	{ return (htons(*x) >> (s)) & (m); }				\
-	static inline int name##_set_bit_field(uint16_t *x, uint16_t v) \
-	{return (*x = ntohs((htons(*x) & ~((m) << (s)))			\
-				    | ((v & (m)) << (s))));}
 #define UB_ABIT16_FIELD(name, s, m)					\
 	static inline int name##_bit_field(uint16_t x)			\
 	{ return (htons(x) >> (s)) & (m); }				\
@@ -117,12 +102,6 @@
 				    | ((v & (m)) << (s)));}
 
 /** @brief the same like UB_BIT8_FILED, works on 32-bit variable */
-#define UB_BIT32_FIELD(name, s, m)					\
-	static inline int name##_bit_field(uint32_t *x)			\
-	{ return (htonl(*x) >> (s)) & (m); }				\
-	static inline int name##_set_bit_field(uint32_t *x, uint32_t v) \
-	{return (*x = ntohl((htonl(*x) & ~((m) << (s)))			\
-				    | ((v & (m)) << (s))));}
 #define UB_ABIT32_FIELD(name, s, m)					\
 	static inline int name##_bit_field(uint32_t x)			\
 	{ return (htonl(x) >> (s)) & (m); }				\
@@ -132,30 +111,21 @@
 
 /**
  * @brief inline function: name_toggle_bit_field
- *	is created for toggling bit opperation on 8-bit variable.
+ *	is created for toggling bit opperation on a network bit order variable.
  *
- *	e.g UB_BIT8_TOGGLE_FIELD(bs, 2, 1),
- *	  - bs_toggle_bit_field(&v): toggle bit2 at each time of call
+ *	e.g UB_ABIT8_TOGGLE_FIELD(bs, 2, 1),
+ *	  - v=bs_toggle_bit_field(v): toggle bit2 at each time of call
  */
-#define UB_BIT8_TOGGLE_FIELD(name, s, m)				\
-	static inline int name##_toggle_bit_field(uint8_t *x)		\
-	{return (*x = (*x ^ ((m) << (s))));}
 #define UB_ABIT8_TOGGLE_FIELD(name, s, m)				\
 	static inline int name##_toggle_bit_field(uint8_t x)		\
-	{return (*x ^ ((m) << (s)));}
+	{return (x ^ ((m) << (s)));}
 
 /** @brief the same like UB_BIT8_TOGGLE_FIELD, works on 16-bit variable */
-#define UB_BIT16_TOGGLE_FIELD(name, s, m)				\
-	static inline int name##_toggle_bit_field(uint16_t *x)		\
-	{return (*x = ntohs((htons(*x) ^ ((m) << (s)))));}
 #define UB_ABIT16_TOGGLE_FIELD(name, s, m)				\
 	static inline int name##_toggle_bit_field(uint16_t x)		\
 	{return ntohs((htons(x) ^ ((m) << (s))));}
 
 /** @brief the same like UB_BIT8_TOGGLE_FIELD, works on 32-bit variable */
-#define UB_BIT32_TOGGLE_FIELD(name, s, m)				\
-	static inline int name##_toggle_bit_field(uint32_t *x)		\
-	{return (*x = ntohl((htonl(*x) ^ ((m) << (s)))));}
 #define UB_ABIT32_TOGGLE_FIELD(name, s, m)				\
 	static inline int name##_toggle_bit_field(uint32_t x)		\
 	{return ntohl((htonl(x) ^ ((m) << (s))));}

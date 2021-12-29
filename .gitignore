@@ -38,3 +38,6 @@ xl4unibase_*.deb
 ubconftest_conf.*
 ubconftest_values.*
 xl4_header.tex
+.cert.json
+.misra.json
+make_cppcheck.mk

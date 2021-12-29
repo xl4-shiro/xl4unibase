@@ -103,10 +103,31 @@ int ubb_memory_out_lastline(char **str, int *size);
 int ubb_memory_out_alldata(char **rstr, int *size);
 
 /**
+ * @brief write the data in memory_out buffer into a file
+ * @param fname	file name
+ * @return 0 on success, -1 on error
+ */
+int ubb_memory_file_out(const char *fname);
+
+/**
  * @brief return the default initialization parameters supported in the binding layer
  * @param init_para	pointer of unibase initialization parameter
  */
 void ubb_default_initpara(unibase_init_para_t *init_para);
+
+typedef uint64_t(*get64ts_t)(void);
+/**
+ * @brief set gptptime function for ub_gptp_gettime64
+ * @param func	a function which returns 64-bit gptp time
+ */
+void set_gptp_gettime64(get64ts_t func);
+
+/**
+ * @brief initialize unibase with 'ubb_default_initpara'
+ * @note ubb_memory_out is initialize with no memory. To use memory logging,
+ *       'ubb_memory_out_init' needs to be called separately
+ */
+void ubb_unibase_easyinit(void);
 
 #endif
 /** @}*/

@@ -49,9 +49,11 @@ AC_C_INLINE
 AC_TYPE_UINT8_T
 
 # Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memmove memset strtol])
+AC_CHECK_FUNC([malloc], [], [AC_MSG_ERROR([malloc() function not found.])])
+AC_CHECK_FUNC([realloc], [], [AC_MSG_ERROR([realloc() function not found.])])
+AC_CHECK_FUNC([memmove], [], [AC_MSG_ERROR([memmove() function not found.])])
+AC_CHECK_FUNC([memset], [], [AC_MSG_ERROR([memset() function not found.])])
+AC_CHECK_FUNC([strtol], [], [AC_MSG_ERROR([strtol() function not found.])])
 
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_FILES([Makefile])
