@@ -172,7 +172,7 @@ static int setup(void **state)
 	init_para.ub_log_initstr="4,ubase:35";
 	unibase_init(&init_para);
 	ubb_memory_out_init(memoutbuf, sizeof(memoutbuf)-1);
-	set_gptp_gettime64(gptp_dummy_time64);
+	ubb_set_gptp_gettime64(gptp_dummy_time64);
 	return 0;
 }
 

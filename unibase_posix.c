@@ -26,12 +26,12 @@
  * Author: Shiro Ninomiya (shiro@excelfore.com)
  */
 
-#include "unibase.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <time.h>
+#include "unibase.h"
 #include "unibase_binding.h"
 
 typedef struct memory_out_data {
@@ -299,7 +299,7 @@ void ubb_default_initpara(unibase_init_para_t *init_para)
 	init_para->ub_log_initstr=default_log_initstr;
 }
 
-void set_gptp_gettime64(get64ts_t func)
+void ubb_set_gptp_gettime64(get64ts_t func)
 {
 	gptp_gettime64=func;
 }

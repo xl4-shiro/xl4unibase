@@ -9,9 +9,9 @@
 #
 # Note: dependencies are not defined. Add in 'debian/control' if needed
 #
-PACKAGENAME=$(shell sed -rn "s/^PACKAGENAME *= *(\S+).*/\1/p" Makefile.am)
-VERSION=$(shell sed -rn "s/^VERSION *= *(\S+).*/\1/p" Makefile.am)
-DESCRIPTION=$(shell sed -rn "s/^DESCRIPTION *= *(.*)/\1/p" Makefile.am)
+PACKAGENAME=$(shell sed -n '/AC_INIT/p' configure.ac | awk -F"[][]" '{print $$2}')
+VERSION=$(shell sed -n '/AC_INIT/p' configure.ac | awk -F"[][]" '{print $$4}')
+DESCRIPTION=$(shell sed -n "s/^.*PACKAGE_DESC,//p" configure.ac | sed 's/.$$//')
 USERNAME=$(shell git config user.name)
 USEREMAIL=$(shell git config user.email)
 deb:

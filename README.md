@@ -83,7 +83,7 @@ In ths same way, suffix 'm' uses the monotonic based timestamps,
 and suffix 'g' uses gPTP based timestamp.
 
 'unibase_posix.c' doesn't support gPTP based timestamp in 'ubb_default_initpara'.
-To use it, you need to set gptp time fuction by calling 'set_gptp_gettime64'.
+To use it, you need to set gptp time fuction by calling 'ubb_set_gptp_gettime64'.
 
 To override a hardcoded string to initialize the logging functions,
 an environment variable can be used.

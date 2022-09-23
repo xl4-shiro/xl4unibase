@@ -2,7 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([xl4unibase], [1.0], [shiro@excelfore.com])
+AC_INIT([xl4unibase], [1.1.4], [shiro@excelfore.com])
+AC_SUBST(PACKAGE_DESC,"Excelfore universal base library")
+
 AM_INIT_AUTOMAKE([-Wall -Werror subdir-objects])
 AM_PROG_AR
 LT_PREREQ([2.2])
@@ -15,6 +17,10 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AM_PROG_CC_C_O
 AC_PROG_CC_C99
+
+# pkg-config dependency
+PKG_PROG_PKG_CONFIG
+PKG_INSTALLDIR
 
 # Check if posix platform
 AC_CHECK_HEADERS([pthread.h],
@@ -56,6 +62,8 @@ AC_CHECK_FUNC([memset], [], [AC_MSG_ERROR([memset() function not found.])])
 AC_CHECK_FUNC([strtol], [], [AC_MSG_ERROR([strtol() function not found.])])
 
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+    Makefile
+    xl4unibase.pc])
 
 AC_OUTPUT

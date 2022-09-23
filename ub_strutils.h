@@ -88,6 +88,19 @@ char *ub_bsid2ssid(ub_streamid_t bsid, char *ssid);
 uint8_t *ub_ssid2bsid(const char *ssid, ub_streamid_t bsid);
 
 /**
+ * @brief convert a string type byte array('01,00,1e,00,00,03,....02,00,01')
+ *   to a byte array
+ * @return  the length of the returned array
+ * @param   input byte array in string format; either lower or upper case hex
+ * @param   dest  the converted byte array.
+ *	    The caller is responsible to reserve enough size of memory with 'dest'.
+ * @param   base  used for strtoul conversion, must be '10','16'
+ * @note    the conversion is stopped when it meets non-convertible string
+ *	    Whatever non-convertible characters are treated as a delimiter.
+ */
+int ub_str2bytearray(uint8_t* dest, const char* input, uint8_t base);
+
+/**
  * @brief look for non space charcter and return the number of passed characters
  * @param astr	string
  * @param maxn	max number of characters to be checked

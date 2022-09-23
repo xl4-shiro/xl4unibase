@@ -41,3 +41,4 @@ xl4_header.tex
 .cert.json
 .misra.json
 make_cppcheck.mk
+*.pc

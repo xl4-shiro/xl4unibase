@@ -86,6 +86,45 @@ uint8_t *ub_ssid2bsid(const char *ssid, ub_streamid_t bsid)
 	return bsid;
 }
 
+static bool check_delimi(char a, uint8_t base)
+{
+	if(a>='0' && a<='9') return false;
+	if((base==16) &&
+	   ((a>='a' && a<='f') ||
+	    (a>='A' && a<='F'))) return false;
+	return true;
+}
+
+int ub_str2bytearray(uint8_t* dest, const char* input, uint8_t base)
+{
+	const char *astr;
+	int i;
+	unsigned long int v;
+	char vstr[3];
+	int len=0;
+	bool gon;
+	if(!dest) return 0;
+	if(!input || input[0]==0) return 0;
+	for(astr=input;*astr!=0;){
+		gon=false;
+		for(i=0;i<3;i++){
+			if(check_delimi(astr[i], base) || astr[i]==0){
+				if(i==0) break;
+				vstr[i]=0;
+				v=strtoul(vstr, NULL, base);
+				if(v>=256) break;
+				dest[len++]=v;
+				if(astr[i]) gon=true;
+				break;
+			}
+			vstr[i]=astr[i];
+		}
+		if(!gon) break;
+		astr+=i+1;
+	}
+	return len;
+}
+
 static const char *white_spaces=" \t\n\r";
 int ub_find_nospace(const char *astr, int maxn)
 {

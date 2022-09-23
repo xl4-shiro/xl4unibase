@@ -58,6 +58,52 @@ static void test_ssid2bsid(void **state)
 	assert_int_equal(bdb[8],0xff);
 }
 
+static void test_str2bytearray(void **state)
+{
+	int res;
+	const char *astr="00:11:22";
+	uint8_t rbuf[256];
+	res=ub_str2bytearray(rbuf, astr, 16);
+	assert_int_equal(res,3);
+	assert_int_equal(rbuf[0],0);
+	assert_int_equal(rbuf[1],0x11);
+	assert_int_equal(rbuf[2],0x22);
+	astr="10,1,2,20";
+	res=ub_str2bytearray(rbuf, astr, 10);
+	assert_int_equal(res,4);
+	assert_int_equal(rbuf[0],10);
+	assert_int_equal(rbuf[1],1);
+	assert_int_equal(rbuf[2],2);
+	assert_int_equal(rbuf[3],20);
+	astr="1,2,300,5";
+	res=ub_str2bytearray(rbuf, astr, 10);
+	assert_int_equal(res,2);
+	assert_int_equal(rbuf[0],1);
+	assert_int_equal(rbuf[1],2);
+	astr="1,,2";
+	res=ub_str2bytearray(rbuf, astr, 10);
+	assert_int_equal(res,1);
+	assert_int_equal(rbuf[0],1);
+	astr="";
+	res=ub_str2bytearray(rbuf, astr, 0);
+	assert_int_equal(res,0);
+	astr="-1,0";
+	res=ub_str2bytearray(rbuf, astr, 0);
+	assert_int_equal(res,0);
+	astr="a";
+	res=ub_str2bytearray(rbuf, astr, 0);
+	assert_int_equal(res,0);
+	astr="a";
+	res=ub_str2bytearray(rbuf, astr, 16);
+	assert_int_equal(res,1);
+	assert_int_equal(rbuf[0],0xa);
+	astr="0,1,,,,";
+	res=ub_str2bytearray(rbuf, astr, 0);
+	assert_int_equal(res,2);
+	assert_int_equal(rbuf[0],0);
+	assert_int_equal(rbuf[1],1);
+}
+
 static int setup(void **state)
 {
 	return 0;
@@ -73,6 +119,7 @@ int main(int argc, char *argv[])
 	const struct CMUnitTest tests[] = {
 		cmocka_unit_test(test_smac2bmac),
 		cmocka_unit_test(test_ssid2bsid),
+		cmocka_unit_test(test_str2bytearray),
 	};
 
 	return cmocka_run_group_tests(tests, setup, teardown);

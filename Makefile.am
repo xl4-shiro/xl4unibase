@@ -18,9 +18,9 @@
 # along with Excelfore-unibase.  If not, see
 # <https://www.gnu.org/licenses/old-licenses/gpl-2.0.html>.
 #
-PACKAGENAME=xl4unibase
-VERSION=1.1.2
-DESCRIPTION=Excelfore universal base library
+PACKAGENAME=@PACKAGE_NAME@
+VERSION=@PACKAGE_VERSION@
+DESCRIPTION=@PACKAGE_DESC@
 lib_LTLIBRARIES = libx4unibase.la
 libx4unibase_la_SOURCES = \
 unibase.h unibase_private.h unibase.c \
@@ -86,6 +86,8 @@ ub_esarray_posix_unittest_LDADD = libx4unibase.la
 ub_esarray_posix_unittest_LDFLAGS = -lpthread -lcmocka
 endif
 
+pkgconfig_DATA=$(PACKAGENAME).pc
+
 ubconftest_conf.h ubconftest_conf.c ubconftest_values.c: ubconftest_def.h ub_genconf.py
 	$(srcdir)/ub_genconf.py -i $(srcdir)/ubconftest_def.h -c ubconftest_conf.c \
 	-d ubconftest_conf.h -v ubconftest_values.c -p ubconftest
@@ -121,10 +123,10 @@ $(srcdir)/xl4_header.tex: $(TEX_TEMPLATE) Makefile.am
 $(TARGET_PDF): $(DOC_LATEC_REFMAN)
 	$(INSTALL_DATA) $^ $@
 
-$(DOC_LATEC_REFMAN): $(srcdir)/xl4_header.tex $(DOC_HTML_INDEX)
+$(DOC_LATEC_REFMAN): $(DOC_HTML_INDEX)
 	make -C $(srcdir)/docoutput/latex
 
-docoutput/html $(DOC_HTML_INDEX): $(pkginclude_HEADERS) README.md
+docoutput/html $(DOC_HTML_INDEX): $(srcdir)/xl4_header.tex $(pkginclude_HEADERS) README.md
 	cd $(srcdir); UNIBASE_VERSION=$(VERSION)-`date +%Y%m%d` doxygen unibase_doxygen.conf
 
 install-html-local: docoutput/html $(DOC_HTML_INDEX)

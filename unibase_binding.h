@@ -120,7 +120,7 @@ typedef uint64_t(*get64ts_t)(void);
  * @brief set gptptime function for ub_gptp_gettime64
  * @param func	a function which returns 64-bit gptp time
  */
-void set_gptp_gettime64(get64ts_t func);
+void ubb_set_gptp_gettime64(get64ts_t func);
 
 /**
  * @brief initialize unibase with 'ubb_default_initpara'
